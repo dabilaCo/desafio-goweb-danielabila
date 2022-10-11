@@ -1,9 +1,9 @@
 package handler
 
 import (
+	"desafio-goweb-danielabila/internal/tickets"
 	"net/http"
-	
-	"github.com/dabilaCo/desafio-goweb-danielabila/internal/tickets"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +15,18 @@ func NewService(s tickets.Service) *Service {
 	return &Service{
 		service: s,
 	}
+
+}
+
+func (s *Service) GetAll() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tick, err := s.service.GetAll(c)
+		if err != nil {
+			c.String(http.StatusInternalServerError, err.Error(), nil)
+			return
+		}
+		c.JSON(200, tick)
+	}
 }
 
 func (s *Service) GetTicketsByCountry() gin.HandlerFunc {
@@ -22,13 +34,13 @@ func (s *Service) GetTicketsByCountry() gin.HandlerFunc {
 
 		destination := c.Param("dest")
 
-		tickets, err := s.service.GetTotalTickets(c, destination)
+		tick, err := s.service.GetTicketByDestination(c, destination)
 		if err != nil {
 			c.String(http.StatusInternalServerError, err.Error(), nil)
 			return
 		}
 
-		c.JSON(200, tickets)
+		c.JSON(200, tick)
 	}
 }
 
@@ -37,7 +49,7 @@ func (s *Service) AverageDestination() gin.HandlerFunc {
 
 		destination := c.Param("dest")
 
-		avg, err := s.service.AverageDestination(c, destination)
+		avg, err := s.service.GetAveragePerCountry(c, destination)
 		if err != nil {
 			c.String(http.StatusInternalServerError, err.Error(), nil)
 			return

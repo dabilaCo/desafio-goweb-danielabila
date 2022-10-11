@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-
-	"desafio-go-web/internal/domain"
+	"desafio-goweb-danielabila/cmd/server/handler"
+	"desafio-goweb-danielabila/internal/tickets"
+	"desafio-goweb-danielabila/internal/domain"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,9 +19,19 @@ func main() {
 		panic("Couldn't load tickets")
 	}
 
+	repo := tickets.NewRepository(list)
+	service := tickets.NewService(repo)
+	h := handler.NewService(service)
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
 	// Rutas a desarollar:
+
+	tick := r.Group("/tickets")
+	{
+		tick.GET("/all", h.GetAll())
+		tick.GET("/bycountry/:dest", h.GetTicketsByCountry())
+		tick.GET("/average/:dest", h.AverageDestination())
+	}
 	
 	// GET - “/ticket/getByCountry/:dest”
 	// GET - “/ticket/getAverage/:dest”

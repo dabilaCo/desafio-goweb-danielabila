@@ -1,6 +1,6 @@
-module github.com/dabilaCo/desafio-goweb-danielabila
+module desafio-goweb-danielabila
 
-go 1.18
+go 1.19
 
 require github.com/gin-gonic/gin v1.8.1
 
